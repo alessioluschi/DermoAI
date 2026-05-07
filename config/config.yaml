@@ -1,0 +1,154 @@
+hardware:
+  device: "cuda"
+  cuda_device_id: 0
+  vram_total_gb: 10.0
+  vram_safety_margin_gb: 1.5
+  monitor_vram: true
+  empty_cache_between_modules: true
+
+model:
+  architecture: "efficientnet_b0"
+  weights_path: "models/efficientnet_b0_finetuned.pth"
+  num_classes: 2
+  class_names: ["melanoma", "nevus"]
+  input_size: 224
+  precision: "float16"
+
+gradcam:
+  target_layer: "features.8"
+  colormap: "jet"
+  alpha: 0.4
+  method: "gradcam++"
+
+llm:
+  model_name: "BioMistral/BioMistral-7B"
+  quantization: "8bit"
+  quantization_fallback: "4bit"
+  max_new_tokens: 1024
+  min_new_tokens: 80
+  temperature: 0.3
+  top_p: 0.9
+  repetition_penalty: 1.2
+  device_map: "cuda:0"
+  torch_dtype: "float16"
+  offload_after_inference: true
+  template: "config/abc_prompt_template.txt"  
+
+report_generator:
+  abc_generation_mode: "hybrid"  # "hybrid" = rule-based ABC + LLM conclusion (default)
+                                  # "llm_only" = LLM-based ABC + conclusion (fallback if features unavailable)
+
+evaluation:
+  metrics: ["rouge", "bleu", "bertscore"]
+  bertscore_model: "microsoft/deberta-xlarge-mnli"
+  bertscore_model_fallback: "distilbert-base-uncased"
+  rouge_types: ["rouge1", "rouge2", "rougeL"]
+  load_after_llm_offload: true
+  bertscore_offline: false  # set true to load BERTScore model from HF cache without network access
+
+qualitative:
+  clinical_terms:
+    - "asimmetria"
+    - "pseudopodi"
+    - "reticolo pigmentario"
+    - "globuli"
+    - "velo blu-biancastro"
+    - "regressione"
+    - "pattern"
+    - "dermoscopia"
+    - "pigmentazione"
+    - "eterogeneità"
+    - "incisure"
+    - "strie radiali"
+    - "area struttureless"
+    - "network atipico"
+    - "punti"
+    - "iperpigmentazione"
+  action_terms:
+    - "biopsia"
+    - "escissione"
+    - "monitoraggio"
+    - "follow-up"
+    - "dermatoscopia"
+    - "controllo"
+    - "approfondimento"
+    - "rivalutazione"
+
+cross_model:
+  ranking_weights:
+    consensus_bertscore: 0.40
+    qualitative_total: 0.40
+    mean_pairwise_agreement: 0.20
+  sequential_loading: true
+
+rag:
+  enabled: true
+  vector_store: "chroma"
+  chroma_path: "rag_kb/chroma_db"
+  embedding_model: "pritamdeka/S-PubMedBert-MS-MARCO"
+  top_k: 5
+  sources:
+    - name: "pubmed"
+      enabled: true
+      path: "rag_kb/pubmed"
+      chunk_size: 512
+      chunk_overlap: 64
+      query_mode: "hybrid"        # hybrid MeSH + Title/Abstract query
+    - name: "europepmc"
+      enabled: true               # stable REST API, no aggressive rate limiting
+      path: "rag_kb/europepmc"
+      chunk_size: 512
+      chunk_overlap: 64
+    - name: "openi"
+      enabled: true               # NIH domain, consistently reachable
+      path: "rag_kb/openi"
+      chunk_size: 256
+      chunk_overlap: 32
+    - name: "semanticscholar"
+      enabled: true
+      # free API key: semanticscholar.org/product/api
+      # Without key: ~5 abstracts/minute (slow but functional)
+      # With key:    ~60 abstracts/minute
+      api_key: "h2cgbDvcPj3J0F5v8PLfZ85JjwCncNIDa76BnqSR"     # insert your free key here (optional)
+      requests_per_second: 1                                    # with API key: 1 RPS dedicated
+      requests_per_second_no_key: 0.1                          # without API key: 1 every 10s, very conservative
+      path: "rag_kb/semanticscholar"
+      chunk_size: 512
+      chunk_overlap: 64
+    - name: "dermnet"
+      enabled: false              # disabled: global outage confirmed
+  note_bias: >
+    IMPORTANT: Do not use ISIC as a RAG source. ISIC images were used to
+    train StyleGAN (data augmentation) and then EfficientNet-B0. Using ISIC
+    in the RAG as well would cause data leakage and amplification of the GAN's
+    demographic biases (Fitzpatrick I-III skin type over-representation).
+
+finetune:
+  epochs: 25
+  lr: 1.0e-3                    # learning rate for classifier head (classifier.1)
+  lr_backbone: 1.0e-4           # learning rate for features.8 (last backbone block)
+  unfreeze_last_block: true     # unfreeze features.8 + classifier.1 (vs head-only)
+  focal_loss: true              # use Focal Loss (class-weighted) instead of CrossEntropyLoss
+  focal_alpha: 0.65             # melanoma class weight (class 0); nevus gets 1-alpha
+  focal_gamma: 2.5              # focusing parameter — higher = more focus on hard examples
+
+feature_extractor:
+  enabled: true
+  heatmap_threshold: 0.30      # binary mask threshold for all methods
+  kmeans_k: 5                  # colour clusters
+  kmeans_random_state: 42
+  asymmetry_thresholds: [0.2, 0.4, 0.6]
+  border_thresholds: [0.4, 0.6, 0.8]
+  heterogeneity_thresholds: [0.15, 0.30, 0.50]
+  gradcam_peak_threshold: 0.60 # minimum mean activation for peak_regions
+  top_n_regions: 3             # regions to include in focus_description
+
+preprocessing:
+  square_crop: true              # crop to square (min side) before resize — needed for non-square inputs
+  resize: 224
+  normalize_mean: [0.485, 0.456, 0.406]
+  normalize_std: [0.229, 0.224, 0.225]
+  colour_normalisation: true    # set true to apply ISIC colour normalisation (domain shift mitigation)
+  melanoma_threshold: 0.50       # asymmetric TTA decision threshold — lower = higher melanoma sensitivity
+  tta_enabled: true              # use predict_tta() when --finetune mode evaluates test images
+  tta_n_augmentations: 5         # number of TTA augmentations (max 5: standard, hflip, vflip, rot90, rot180)

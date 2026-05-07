@@ -1,0 +1,20 @@
+# Dipendenze per costruire la KB RAG (rag_kb/build_kb.py)
+# Nessuna GPU richiesta — funziona su qualsiasi macchina.
+# Installazione: pip install -r requirements_kb.txt
+
+# Vector store
+chromadb>=0.4.0
+
+# Embedding su CPU (S-PubMedBert-MS-MARCO ~400MB)
+sentence-transformers>=2.2.0
+
+# PubMed Central OA (Entrez API)
+biopython>=1.81
+
+# DermNet NZ scraping
+requests>=2.31.0
+beautifulsoup4>=4.12.0
+
+# Utility
+tqdm>=4.65.0
+pyyaml>=6.0
