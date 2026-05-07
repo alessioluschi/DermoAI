@@ -1,0 +1,69 @@
+cff-version: 1.2.0
+title: >-
+  A Multimodal Deep Learning System for Automated Dermoscopic Classification and Evidence-Grounded Clinical Reporting
+message: >-
+  If you use this software in your research, please cite it using
+  the metadata from this file and the associated journal article.
+type: software
+authors:
+  - given-names: Alessio
+    family-names: Luschi
+    email: alessio.luschi@unisi.it
+    affiliation: Department of Biomedical Technologies, University of Siena
+    orcid: "https://orcid.org/0000-0002-7615-9187"
+  - given-names: Linda
+    family-names: Tognetti
+    affiliation: Dermatology Unit, Department of Medicine, Surgery and Neuroscience, University of Siena
+  - given-names: Gabriele
+    family-names: Cevenini
+    affiliation: Department of Biomedical Technologies, University of Siena
+  - given-names: Pietro
+    family-names: Rubegni
+    affiliation: Dermatology Unit, Department of Medicine, Surgery and Neuroscience, University of Siena
+  - given-names: Ernesto
+    family-names: Iadanza
+    affiliation: Department of Biomedical Technologies, University of Siena
+repository-code: "https://github.com/alessioluschi/DermoAI"
+url: "https://github.com/alessioluschi/DermoAI"
+license: CC-BY-NC-4.0
+version: 1.0.0
+date-released: "2026-05-08"
+abstract: >-
+  An end-to-end multimodal AI pipeline that automates classification and generates 
+  structured clinical reports for dermoscopic lesions. The system integrates an 
+  EfficientNet-B0 classifier, a GradCAM++ visual module, a feature extractor, and 
+  a BioMistral-7B language model grounded in biomedical literature. 
+  Tested against expert-authored reports, the pipeline achieved 80% classification 
+  accuracy and produced highly rated, image-specific clinical reports. 
+  This hybrid approach demonstrates the feasibility of using AI for triage and 
+  decision support in first-level clinical settings, pending larger-scale validation.
+preferred-citation:
+  type: article
+  title: >-
+    A Multimodal Deep Learning System for Automated Dermoscopic Classification and Evidence-Grounded Clinical Reporting
+  authors:
+    - given-names: Alessio
+      family-names: Luschi
+      email: alessio.luschi@unisi.it
+      affiliation: Department of Biomedical Technologies, University of Siena
+      orcid: "https://orcid.org/0000-0002-7615-9187"
+    - given-names: Linda
+      family-names: Tognetti
+      affiliation: Dermatology Unit, Department of Medicine, Surgery and Neuroscience, University of Siena
+    - given-names: Gabriele
+      family-names: Cevenini
+      affiliation: Department of Biomedical Technologies, University of Siena
+    - given-names: Pietro
+      family-names: Rubegni
+      affiliation: Dermatology Unit, Department of Medicine, Surgery and Neuroscience, University of Siena
+    - given-names: Ernesto
+      family-names: Iadanza
+      affiliation: Department of Biomedical Technologies, University of Siena
+  journal: ""
+  year: 2026
+  volume: XX
+  issue: X
+  start: 1
+  end: 15
+  doi: ""
+  issn: ""
