@@ -531,6 +531,35 @@ class ABCDEReportGenerator:
                     f" L'attivazione GradCAM++ risulta concentrata su {gradcam_focus}."
                 )
 
+        # 9. Strip English sentences (BioMistral code-switching)
+        sentences = re.split(r"(?<=[.!?])\s+", conclusion)
+        italian_only = []
+        for sent in sentences:
+            # Count English function words vs Italian
+            eng_words = len(re.findall(
+                r"\b(?:the|of the|however|therefore|since|should|helps|"
+                r"such as|compared|recommend|according|patient|lesion is|"
+                r"referred|immediately|examination)\b",
+                sent.lower(),
+            ))
+            if eng_words >= 3:
+                logger.warning(f"Removed English sentence: {sent!r}")
+                continue
+            italian_only.append(sent)
+        conclusion = " ".join(italian_only).strip()
+
+        # 10. Strip LLM boilerplate that never carries clinical content
+        #     Only target phrases that are pure filler (verified on corpus).
+        #     Do NOT strip "come suggerito dal modello" or "la classificazione
+        #     CNN ha indicato" — these sometimes wrap clinical terms or GradCAM refs.
+        _BOILERPLATE_RE = re.compile(
+            r"i dati forniti sono compatibili con [^.!?]*[.!?]?",
+            re.IGNORECASE,
+        )
+        cleaned = _BOILERPLATE_RE.sub("", conclusion).strip()
+        if cleaned:
+            conclusion = re.sub(r"\s{2,}", " ", cleaned).strip()
+
         return conclusion.strip()
 
     def _generate_template_report(
@@ -653,7 +682,9 @@ class ABCDEReportGenerator:
         use_hybrid = False
         if mode == "hybrid" and image_features is not None:
             try:
-                abc_gen = ABCTextGenerator()
+                abc_gen = ABCTextGenerator(
+                    concise=self.config.get("concise_style", False),
+                )
                 abc_sections = abc_gen.generate_abc_sections(
                     features=image_features,
                     classification_result=classification_result,

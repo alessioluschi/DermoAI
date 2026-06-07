@@ -19,11 +19,25 @@ _ASYMMETRY_LABEL_MAP: dict[str, str] = {
     "marcatamente asimmetrica": "marcata asimmetria dermoscopica, con distribuzione caotica della pigmentazione e disorganizzazione delle strutture",
 }
 
+_ASYMMETRY_CONCISE: dict[str, str] = {
+    "simmetrica": "Lesione simmetrica sui due assi",
+    "lievemente asimmetrica": "Lieve asimmetria del pattern",
+    "asimmetrica": "Asimmetria del pattern",
+    "marcatamente asimmetrica": "Lesione asimmetrica sui due assi",
+}
+
 _BORDER_TEXTS: dict[str, str] = {
     "regolari": "I margini appaiono regolari e ben definiti, con profilo liscio e assenza di incisure periferiche.",
     "lievemente irregolari": "I margini presentano lieve irregolarità, con rare strie radiali e minime asimmetrie periferiche.",
     "irregolari": "I margini risultano irregolari, con morfologia compatibile con incisure periferiche e possibili pseudopodi.",
     "molto irregolari": "I margini sono marcatamente irregolari, con aspetto frastagliato, reticolo pigmentario interrotto e possibili pseudopodi atipici.",
+}
+
+_BORDER_CONCISE: dict[str, str] = {
+    "regolari": "Bordi regolari",
+    "lievemente irregolari": "Bordi lievemente irregolari",
+    "irregolari": "Bordi irregolari",
+    "molto irregolari": "Bordi estremamente irregolari",
 }
 
 _HETEROGENEITY_TEXTS: dict[str, str] = {
@@ -37,14 +51,19 @@ _HETEROGENEITY_TEXTS: dict[str, str] = {
 class ABCTextGenerator:
     """Converts quantitative dermoscopy features into Italian ABC report sections.
 
-    Stateless — no constructor parameters required.  All logic is
-    deterministic: identical ``features`` dicts always produce identical text.
+    Args:
+        concise: If True, produce short telegraphic text matching clinical
+            rater style (e.g. "Bordi irregolari" instead of full sentences).
+            Default: False (verbose, backward-compatible).
 
     Example:
-        >>> gen = ABCTextGenerator()
+        >>> gen = ABCTextGenerator(concise=True)
         >>> sections = gen.generate_abc_sections(features, classification_result)
         >>> print(sections["asymmetry"])
     """
+
+    def __init__(self, concise: bool = False) -> None:
+        self.concise = concise
 
     def _generate_asymmetry(self, asymmetry: dict) -> str:
         """Generate Section A text from asymmetry feature dict.
@@ -58,6 +77,10 @@ class ABCTextGenerator:
         ax: float = float(asymmetry.get("asymmetry_x", 0.0))
         ay: float = float(asymmetry.get("asymmetry_y", 0.0))
         label: str = asymmetry.get("asymmetry_label", "simmetrica")
+
+        if self.concise:
+            return _ASYMMETRY_CONCISE.get(label, label.capitalize())
+
         mapped = _ASYMMETRY_LABEL_MAP.get(label, label)
 
         if abs(ax - ay) > 0.10:
@@ -75,6 +98,9 @@ class ABCTextGenerator:
         """
         circ: float = float(border.get("circularity", 1.0))
         label: str = border.get("border_label", "regolari")
+
+        if self.concise:
+            return _BORDER_CONCISE.get(label, f"Bordi {label}")
 
         text = _BORDER_TEXTS.get(
             label,
@@ -106,11 +132,6 @@ class ABCTextGenerator:
         colour_pct: dict[str, float] = colour.get("colour_percentages", {})
         n_dom: int = int(colour.get("n_dominant_colours", 1))
 
-        het_text = _HETEROGENEITY_TEXTS.get(
-            het_label,
-            "La lesione presenta eterogeneità cromatica",
-        )
-
         # Colour composition — only colours > 5%, sorted descending, no percentages
         sorted_colours = sorted(
             [(name, pct) for name, pct in colour_pct.items() if pct > 5.0],
@@ -118,6 +139,17 @@ class ABCTextGenerator:
         )
         n_colors = len(sorted_colours)
         n_word = self._NUM_WORDS.get(n_colors, str(n_colors))
+
+        if self.concise:
+            # Telegraphic style: "Tre colori" or "Un colore"
+            if n_colors >= 2:
+                return f"{n_word.capitalize()} colori"
+            return "Un colore"
+
+        het_text = _HETEROGENEITY_TEXTS.get(
+            het_label,
+            "La lesione presenta eterogeneità cromatica",
+        )
 
         if sorted_colours:
             names = [name for name, _ in sorted_colours]

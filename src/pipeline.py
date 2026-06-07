@@ -1424,6 +1424,7 @@ Examples:
   python -m src.pipeline --finetune finetune/images/
   python -m src.pipeline --finetune finetune/images/ --test finetune/test_images/ --output finetune/outputs/
   python -m src.pipeline --eval-only outputs/run_20240101_120000 --ground-truth-dir data/ground_truth_reports/
+  python -m src.pipeline --interrater-eval --gt-dir data/ground_truth_reports/ --reports-dir outputs/reports/
 """,
     )
 
@@ -1451,6 +1452,18 @@ Examples:
     parser.add_argument(
         "--eval-only", type=str, metavar="RUN_DIR",
         help="Run NLG evaluation on an existing run directory (use with --ground-truth-dir)",
+    )
+    parser.add_argument(
+        "--interrater-eval", action="store_true",
+        help="Run inter-rater agreement evaluation and exit",
+    )
+    parser.add_argument(
+        "--gt-dir", type=str, default=None, metavar="DIR",
+        help="Ground truth reports directory for --interrater-eval (default: from config)",
+    )
+    parser.add_argument(
+        "--reports-dir", type=str, default=None, metavar="DIR",
+        help="AI reports directory for --interrater-eval (default: from config)",
     )
 
     args = parser.parse_args()
@@ -1521,6 +1534,20 @@ Examples:
         result = pipeline.run_eval_only(args.eval_only, gt_dir)
         print(f"\n✓ Evaluation complete.")
         print(f"  Output: {result['output_dir']}")
+
+    elif args.interrater_eval:
+        from .interrater_evaluator import InterRaterEvaluator
+
+        ir_config = pipeline.config.get("interrater", {})
+        evaluator = InterRaterEvaluator(ir_config)
+        ir_gt_dir = args.gt_dir or ir_config.get("gt_dir", "data/ground_truth_reports")
+        ir_reports_dir = args.reports_dir or ir_config.get("reports_dir", "outputs/reports")
+        ir_output_dir = (
+            args.output if args.output != "finetune/outputs/"
+            else ir_config.get("output_dir", "outputs/interrater")
+        )
+        result = evaluator.run(ir_gt_dir, ir_reports_dir, ir_output_dir)
+        print(f"\n  Output: {ir_output_dir}")
 
     else:
         parser.print_help()
