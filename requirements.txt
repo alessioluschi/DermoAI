@@ -24,6 +24,11 @@ sacrebleu>=2.3.0
 bert-score>=0.3.13
 nltk>=3.8.0
 
+# Inter-rater agreement
+krippendorff>=0.6.0
+statsmodels>=0.14.0
+pingouin>=0.5.4
+
 # Data & Viz
 Pillow>=10.0.0
 numpy>=1.24.0
