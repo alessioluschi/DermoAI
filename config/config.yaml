@@ -8,7 +8,7 @@ hardware:
 
 model:
   architecture: "efficientnet_b0"
-  weights_path: "models/efficientnet_b0_finetuned.pth"
+  weights_path: "models/efficientnet_b0_finetuned_5.pth"
   num_classes: 2
   class_names: ["melanoma", "nevus"]
   input_size: 224
@@ -24,19 +24,20 @@ llm:
   model_name: "BioMistral/BioMistral-7B"
   quantization: "8bit"
   quantization_fallback: "4bit"
-  max_new_tokens: 1024
-  min_new_tokens: 80
+  max_new_tokens: 256           # was 1024 — limits verbosity while allowing GradCAM + action
+  min_new_tokens: 40            # was 80 — allow shorter outputs
   temperature: 0.3
   top_p: 0.9
   repetition_penalty: 1.2
   device_map: "cuda:0"
   torch_dtype: "float16"
   offload_after_inference: true
-  template: "config/abc_prompt_template.txt"  
+  template: "config/abc_prompt_template_concise.txt"
 
 report_generator:
   abc_generation_mode: "hybrid"  # "hybrid" = rule-based ABC + LLM conclusion (default)
                                   # "llm_only" = LLM-based ABC + conclusion (fallback if features unavailable)
+  concise_style: false            # true = telegraphic ABC like clinical raters; false = verbose (default)
 
 evaluation:
   metrics: ["rouge", "bleu", "bertscore"]
@@ -122,6 +123,30 @@ rag:
     train StyleGAN (data augmentation) and then EfficientNet-B0. Using ISIC
     in the RAG as well would cause data leakage and amplification of the GAN's
     demographic biases (Fitzpatrick I-III skin type over-representation).
+
+interrater:
+  enabled: true
+  gt_dir: "data/ground_truth_reports"
+  reports_dir: "outputs/reports"
+  output_dir: "outputs/interrater"
+  bertscore_model: "microsoft/deberta-xlarge-mnli"
+  bertscore_fallback: "distilbert-base-uncased"
+  bootstrap_iterations: 1000
+  bootstrap_seed: 42
+  min_raters_required: 2
+  min_images_for_categorical: 5
+  kappa_thresholds:
+    poor:           0.00
+    slight:         0.20
+    fair:           0.40
+    moderate:       0.60
+    substantial:    0.80
+    almost_perfect: 1.00
+  icc_thresholds:           # Koo & Li 2016
+    poor:       0.00
+    moderate:   0.50
+    good:       0.75
+    excellent:  0.90
 
 finetune:
   epochs: 25

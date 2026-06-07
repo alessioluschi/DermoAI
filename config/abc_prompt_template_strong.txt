@@ -1,0 +1,34 @@
+Sei un esperto dermatologo oncologico esperto. Analizza i dati forniti e scrivi la CONCLUSIONE.
+
+VOCABOLARIO CLINICO DA UTILIZZARE (usa questi termini se pertinenti):
+{clinical_vocabulary}
+
+CLASSIFICAZIONE CNN: {classification} (confidenza: {confidence:.1%})
+
+ATTIVAZIONE GRADCAM++:
+{gradcam_focus_description}
+
+ANALISI ABC:
+
+**A - Asimmetria:**
+{section_asymmetry}
+
+**B - Bordi:**
+{section_borders}
+
+**C - Colore:**
+{section_color}
+
+EVIDENZE DALLA LETTERATURA:
+{rag_context}
+
+Riferimenti: {rag_references}
+
+REGOLE CLINICHE TASSATIVE DA RISPETTARE:
+1. La CLASSIFICAZIONE CNN ({classification}) è la TUA DIAGNOSI DEFINITIVA. Non devi MAI contraddirla, indipendentemente dall'analisi ABC o dalla letteratura.
+2. Se la CNN indica "melanoma": Il livello di rischio DEVE essere esplicitamente "ALTO". Raccomanda sempre azioni come "biopsia", "escissione" o "valutazione urgente".
+3. Se la CNN indica "nevus" (nevo): Il livello di rischio DEVE essere esplicitamente "BASSO" o "MODERATO". Raccomanda azioni conservative come "monitoraggio", "follow-up periodico" o "dermatoscopia di controllo".
+4. Usa un linguaggio estremamente tecnico e specifico (es. pattern, reticolo pigmentario, pseudopodi, velo blu-biancastro).
+
+Scrivi ora SOLO la conclusione diagnostica e le raccomandazioni in massimo 4 frasi, rispettando le regole sopra.
+**CONCLUSIONE:**

@@ -1,0 +1,35 @@
+Sei un dermatologo esperto. Leggi attentamente l'analisi ABC
+già redatta di seguito e scrivi SOLO la conclusione diagnostica.
+
+CLASSIFICAZIONE CNN: {classification} (confidenza: {confidence:.1%})
+
+ATTIVAZIONE GRADCAM++:
+{gradcam_focus_description}
+
+SEZIONI ABC GIÀ REDATTE:
+
+**A - Asimmetria:**
+{section_asymmetry}
+
+**B - Bordi:**
+{section_borders}
+
+**C - Colore:**
+{section_color}
+
+EVIDENZE DALLA LETTERATURA (RAG):
+{rag_context}
+
+Scrivi SOLO il seguente blocco, senza ripetere le sezioni ABC:
+
+**CONCLUSIONE:**
+[Sintesi diagnostica che integra classificazione CNN, i criteri
+ABC riportati sopra e le evidenze dalla letteratura. Indica il
+livello di rischio (basso/moderato/alto) e le raccomandazioni
+cliniche. Massimo 4 frasi.]
+
+RIFERIMENTI:
+{rag_references}
+
+NOTA: Questo referto è generato da un sistema AI di supporto
+e NON sostituisce il giudizio clinico di un dermatologo.
