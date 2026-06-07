@@ -14,6 +14,15 @@ authors:
   - given-names: Linda
     family-names: Tognetti
     affiliation: Dermatology Unit, Department of Medicine, Surgery and Neuroscience, University of Siena
+  - given-names: Pascale
+    family-names: Guitera
+    affiliation: Melanoma Institute Australia and Sydney Melanoma Diagnostic Center
+  - given-names: Lara
+    family-names: Maul-Duwendag
+    affiliation: Department of Dermatology, University Hospital Zurich
+  - given-names: Justin
+    family-names: Ko
+    affiliation: Department of Dermatology, Stanford University
   - given-names: Gabriele
     family-names: Cevenini
     affiliation: Department of Biomedical Technologies, University of Siena
@@ -50,6 +59,15 @@ preferred-citation:
     - given-names: Linda
       family-names: Tognetti
       affiliation: Dermatology Unit, Department of Medicine, Surgery and Neuroscience, University of Siena
+    - given-names: Pascale
+      family-names: Guitera
+      affiliation: Melanoma Institute Australia and Sydney Melanoma Diagnostic Center
+    - given-names: Lara
+      family-names: Maul-Duwendag
+      affiliation: Department of Dermatology, University Hospital Zurich
+    - given-names: Justin
+      family-names: Ko
+      affiliation: Department of Dermatology, Stanford University
     - given-names: Gabriele
       family-names: Cevenini
       affiliation: Department of Biomedical Technologies, University of Siena
