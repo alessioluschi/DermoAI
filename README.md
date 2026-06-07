@@ -367,6 +367,27 @@ Useful when:
 - You want to re-evaluate with a different BERTScore model after changing `config.yaml`
 - BERTScore failed during the original batch and you need to retry without regenerating reports
 
+### Inter-rater agreement evaluation
+
+Compute inter-rater agreement (Fleiss' kappa, Krippendorff's alpha) and BERTScore-based NLG agreement across multiple human raters, then compare AI-generated reports against inter-clinician variability using a Mann-Whitney U test:
+
+```bash
+python -m src.pipeline \
+    --interrater-eval \
+    --gt-dir data/ground_truth_reports/ \
+    --reports-dir outputs/run_20240101_120000/reports/ \
+    --output outputs/run_20240101_120000/interrater/
+```
+
+Ground truth reports must be organised as `data/ground_truth_reports/{rater_id}/{image_id}.json`. Only images present across all raters are included. AI reports are loaded from `{reports_dir}/{image_id}_result.json`.
+
+Outputs:
+- `categorical_agreement.json` — Fleiss' kappa and Krippendorff's alpha per ABC field
+- `nlg_interrater.json` — pairwise BERTScore F1 between raters
+- `ai_vs_interrater.json` — AI vs raters BERTScore F1 + Mann-Whitney U test
+- `interrater_summary.md` — human-readable summary
+- `interrater_summary.csv` — machine-readable summary
+
 ### Multi-model comparison
 
 ```bash
