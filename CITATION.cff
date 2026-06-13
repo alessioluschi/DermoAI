@@ -10,31 +10,49 @@ authors:
     family-names: Luschi
     email: alessio.luschi@unisi.it
     affiliation: Department of Biomedical Technologies, University of Siena
+    city: Siena
+    country: Italy
     orcid: "https://orcid.org/0000-0002-7615-9187"
   - given-names: Linda
     family-names: Tognetti
     affiliation: Dermatology Unit, Department of Medicine, Surgery and Neuroscience, University of Siena
+    city: Siena
+    country: Italy
   - given-names: Pascale
     family-names: Guitera
-    affiliation: Melanoma Institute Australia and Sydney Melanoma Diagnostic Center
+    affiliation: Melanoma Institute Australia, University of Sidney, and Sydney Melanoma Diagnostic Centre, Royal Prince Alfred Hospital
+    city: Sidney
+    country: Australia
   - given-names: Lara
     family-names: Maul-Duwendag
     affiliation: Department of Dermatology, University Hospital Zurich
+    city: Zurich
+    country: Switzerland
   - given-names: Justin
     family-names: Ko
     affiliation: Department of Dermatology, Stanford University
+    city: Stanford, CA
+    country: USA
   - given-names: Alessandra
     family-names: Cartocci
     affiliation: Department of Molecular and Developmental Medicine, University of Siena
+    city: Siena
+    country: Italy
   - given-names: Gabriele
     family-names: Cevenini
     affiliation: Department of Biomedical Technologies, University of Siena
+    city: Siena
+    country: Italy
   - given-names: Pietro
     family-names: Rubegni
     affiliation: Dermatology Unit, Department of Medicine, Surgery and Neuroscience, University of Siena
+    city: Siena
+    country: Italy
   - given-names: Ernesto
     family-names: Iadanza
     affiliation: Department of Biomedical Technologies, University of Siena
+    city: Siena
+    country: Italy
 repository-code: "https://github.com/alessioluschi/DermoAI"
 url: "https://github.com/alessioluschi/DermoAI"
 license: CC-BY-NC-4.0
@@ -58,31 +76,49 @@ preferred-citation:
       family-names: Luschi
       email: alessio.luschi@unisi.it
       affiliation: Department of Biomedical Technologies, University of Siena
+      city: Siena
+      country: Italy
       orcid: "https://orcid.org/0000-0002-7615-9187"
     - given-names: Linda
       family-names: Tognetti
       affiliation: Dermatology Unit, Department of Medicine, Surgery and Neuroscience, University of Siena
+      city: Siena
+      country: Italy
     - given-names: Pascale
       family-names: Guitera
-      affiliation: Melanoma Institute Australia and Sydney Melanoma Diagnostic Center
+      affiliation: Melanoma Institute Australia, University of Sidney, and Sydney Melanoma Diagnostic Centre, Royal Prince Alfred Hospital
+      city: Sidney
+      country: Australia
     - given-names: Lara
       family-names: Maul-Duwendag
       affiliation: Department of Dermatology, University Hospital Zurich
+      city: Zurich
+      country: Switzerland
     - given-names: Justin
       family-names: Ko
       affiliation: Department of Dermatology, Stanford University
+      city: Stanford, CA
+      country: USA
     - given-names: Alessandra
       family-names: Cartocci
       affiliation: Department of Molecular and Developmental Medicine, University of Siena
+      city: Siena
+      country: Italy
     - given-names: Gabriele
       family-names: Cevenini
       affiliation: Department of Biomedical Technologies, University of Siena
+      city: Siena
+      country: Italy
     - given-names: Pietro
       family-names: Rubegni
       affiliation: Dermatology Unit, Department of Medicine, Surgery and Neuroscience, University of Siena
+      city: Siena
+      country: Italy
     - given-names: Ernesto
       family-names: Iadanza
       affiliation: Department of Biomedical Technologies, University of Siena
+      city: Siena
+      country: Italy
   journal: ""
   year: 2026
   volume: XX
