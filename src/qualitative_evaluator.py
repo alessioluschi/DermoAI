@@ -15,18 +15,18 @@ logger = logging.getLogger(__name__)
 
 QUALITATIVE_RUBRIC: dict[str, dict[int, str]] = {
     "completeness": {
-        5: "Tutte le 3 sezioni ABC + conclusione presenti e sviluppate",
-        4: "Tutte presenti, 1-2 poco sviluppate",
-        3: "1 sezione mancante o 3+ poco sviluppate",
+        5: "Tutte le 3 sezioni ABC + conclusione presenti, conclusione con almeno 2 frasi",
+        4: "Tutte presenti, conclusione con meno di 2 frasi",
+        3: "1 sezione mancante",
         2: "2 sezioni mancanti",
         1: "3+ sezioni mancanti o referto destrutturato",
     },
     "clinical_consistency": {
-        5: "Perfetta coerenza melanoma→alto rischio / nevo→basso rischio",
-        4: "Coerente con 1 lieve incongruenza",
-        3: "Parzialmente coerente",
-        2: "Scarsa coerenza con classificazione CNN",
-        1: "Contraddittorio con classificazione CNN",
+        5: "3+ parole chiave di rischio coerenti con la classe CNN",
+        4: "2 parole chiave di rischio coerenti con la classe CNN",
+        3: "1 parola chiave di rischio coerente con la classe CNN",
+        2: "Nessuna parola chiave di rischio coerente con la classe CNN",
+        1: "Termine in contraddizione con la classe CNN",
     },
     "specificity": {
         5: "8+ termini clinici da lista config",
@@ -36,21 +36,22 @@ QUALITATIVE_RUBRIC: dict[str, dict[int, str]] = {
         1: "0 termini clinici",
     },
     "gradcam_integration": {
-        5: "Riferimenti precisi alle regioni attivate dal GradCAM",
-        4: "Riferimenti generali ma coerenti",
-        3: "Menzione vaga",
-        2: "Nessun riferimento spaziale",
-        1: "Informazioni spaziali contraddittorie",
+        5: "3+ termini spaziali e riferimento esplicito alla mappa GradCAM",
+        4: "2+ termini spaziali",
+        3: "1 termine spaziale",
+        2: "Solo termini generici (regione, zona, area)",
+        1: "Nessun riferimento spaziale",
     },
     "actionability": {
         5: "Livello rischio chiaro + azione specifica",
         4: "Livello rischio + raccomandazione generica",
         3: "Solo livello rischio",
-        2: "Conclusione vaga",
-        1: "Nessuna conclusione",
+        2: "Azione senza livello di rischio",
+        1: "Né livello di rischio né azione",
     },
     "disclaimer_present": {
-        5: "Disclaimer AI completo e ben posizionato",
+        5: "Disclaimer AI completo (2+ frasi chiave)",
+        3: "Disclaimer parziale (1 frase chiave)",
         1: "Disclaimer assente",
     },
 }
@@ -86,7 +87,7 @@ class QualitativeEvaluator:
     def _score_completeness(self, sections: dict[str, str]) -> int:
         """Score based on number and depth of ABC sections + conclusion present.
 
-        ABC sections require at least 1 sentence. Conclusion requires >2 sentences.
+        ABC sections require at least 1 sentence. Conclusion requires at least 2 sentences.
 
         Args:
             sections: dict mapping section keys to text.
@@ -105,7 +106,7 @@ class QualitativeEvaluator:
         filled = [k for k in all_keys if sections.get(k, "").strip()]
         n_filled = len(filled)
 
-        # ABC: at least 1 sentence each; conclusion: >2 sentences
+        # ABC: at least 1 sentence each; conclusion: at least 2 sentences
         abc_ok = all(
             _count_sentences(sections.get(k, "")) >= 1 for k in abc_keys if k in filled
         )
